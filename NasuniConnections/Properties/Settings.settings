@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NasuniConnections.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="nmc" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://nasuni.domain.com</Value>
+    </Setting>
+    <Setting Name="domainname" Type="System.String" Scope="User">
+      <Value Profile="(Default)">domain.com</Value>
+    </Setting>
+    <Setting Name="nasuniusername" Type="System.String" Scope="User">
+      <Value Profile="(Default)">nasuniuser</Value>
+    </Setting>
+    <Setting Name="nasunipassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)">nasunipassword</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

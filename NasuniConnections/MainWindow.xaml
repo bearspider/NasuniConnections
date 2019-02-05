@@ -1,0 +1,345 @@
+﻿<Window x:Class="NasuniConnections.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NasuniConnections"
+        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:Fluent="urn:fluent-ribbon"
+        mc:Ignorable="d"
+        Title="Nasuni Filer Management" Height="750" Width="1000" Icon="images/Rimshotdesign-Nod2-Hard-Disk-Server.ico">
+    <Window.Resources>
+        <ResourceDictionary>
+            <local:MonitoringStatusConverter x:Key="converter"/>
+            <Style x:Key="profileexpander" TargetType="Expander">
+                <Setter Property="Background" Value="LightSteelBlue"/>
+                <Setter Property="ExpandDirection" Value="Down"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="IsExpanded" Value="False"/>
+            </Style>
+            <Style x:Key="overrideexpander" TargetType="Expander">
+                <Setter Property="Background" Value="Azure"/>
+                <Setter Property="ExpandDirection" Value="Down"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="IsExpanded" Value="False"/>
+                <Setter Property="Margin" Value="20,0,0,0"/>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Fluent:Ribbon Grid.Row="0">
+                <!--Backstage-->
+                <Fluent:Ribbon.Menu>
+                    <Fluent:Backstage>
+                        <Fluent:BackstageTabControl>
+                            <Fluent:BackstageTabItem Header="Settings">
+                                <StackPanel  VerticalAlignment="Center">
+                                    <Fluent:TextBox Name="textboxNMC" Margin="0,0,0,10" Width="400" Header="Nasuni Management Console Address: "/>
+                                    <Fluent:TextBox Name="textboxDomain" Margin="0,0,0,10" Width="400" Header="Active Directory Domain: "/>
+                                    <Fluent:TextBox Name="textboxNasuniUser" Margin="0,0,0,10" Width="400" Header="Nasuni Read-Only Username: "/>
+                                    <Grid HorizontalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="300"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock HorizontalAlignment="Right" Grid.Row="0" Grid.Column="0" Text="Nasuni Password: "/>
+                                        <PasswordBox Name="passwordboxNasuni" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" Width="300" PasswordChar="*"/>
+                                    </Grid>
+                                    <Fluent:Button LargeIcon="images\Custom-Save-as.ico" Name="buttonSave" Header="Save" Click="ButtonSave_Click"/>
+                                </StackPanel>
+                            </Fluent:BackstageTabItem>
+                            <Fluent:BackstageTabItem Header="About">
+                                <StackPanel VerticalAlignment="Center">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Version: " Grid.Row="0" Grid.Column="0"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Name="textblockVersion"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Fluent:BackstageTabItem>
+                            <Fluent:Button Header="Exit" Click="ButtonExit_Click"/>
+                        </Fluent:BackstageTabControl>
+                        
+                    </Fluent:Backstage>
+                </Fluent:Ribbon.Menu>
+                <!--Tabs-->
+                <Fluent:RibbonTabItem Header="Home">
+                    <Fluent:RibbonGroupBox Header="Load">
+                        <Fluent:Button Name="buttonLoadFilers" Click="Load_Click" Header="Load Filers" LargeIcon="images\GraphicLoads-100-Flat-Upload.ico"/>
+                        <Fluent:Button Name="buttonRefreshFilers" Click="Load_Click" Header="Refresh" LargeIcon="images\GraphicLoads-100-Flat-Reload.ico" IsEnabled="False"/>
+                    </Fluent:RibbonGroupBox>
+                </Fluent:RibbonTabItem>
+                <Fluent:RibbonTabItem Name="tabSearch" Header="Search">
+                    <Fluent:RibbonGroupBox Header="User Search">
+                        <Fluent:TextBox Name="textboxUserSearch" Margin="0,20,0,0" Header="User Name:" Width="220"/>
+                        <Fluent:Button Margin="5,10,0,0" Header="Search" Click="ButtonUserSearch_Click" LargeIcon="images\graphicloads-100-flat-zoom-search.ico" IsManipulationEnabled="True"/>
+                    </Fluent:RibbonGroupBox>
+                    <Fluent:RibbonGroupBox Header="Share Search">
+                        <Fluent:TextBox Margin="0,20,0,0" Name="textboxShareSearch" Header="Share Name:" Width="150"/>
+                        <Fluent:Button Margin="5,10,0,0" Header="Search" Click="ButtonShareSearch_Click" LargeIcon="images\graphicloads-100-flat-zoom-search.ico" IsManipulationEnabled="True"/>
+                    </Fluent:RibbonGroupBox>
+                    <Fluent:RibbonGroupBox Header="Site Search">
+                        <Fluent:TextBox Margin="0,20,0,0" Name="textboxSiteSearch" Header="Site Name:" Width="150"/>
+                        <Fluent:Button Margin="5,10,0,0" Header="Search" Click="ButtonSiteSearch_Click" LargeIcon="images\graphicloads-100-flat-zoom-search.ico" IsManipulationEnabled="True"/>
+                    </Fluent:RibbonGroupBox>
+                    <Fluent:RibbonGroupBox Header="User Filter">
+                        <Fluent:TextBox Name="textboxUserFilter" TextChanged="TextBoxUserFilter_TextChanged" Margin="0,20,0,0" Header="User Name:" Width="220"/>
+                    </Fluent:RibbonGroupBox>
+                </Fluent:RibbonTabItem>
+            </Fluent:Ribbon>
+        </StackPanel>
+        <xcad:DockingManager 
+                           AllowMixedOrientation="True"
+                           BorderBrush="Black"
+                           BorderThickness="5" Grid.ColumnSpan="2" Grid.Row="1">
+            <xcad:DockingManager.Theme>
+                <xcad:Vs2013BlueTheme/>
+            </xcad:DockingManager.Theme>
+            <xcad:LayoutRoot x:Name="_layoutRoot">
+                <xcad:LayoutPanel>
+                    <xcad:LayoutAnchorablePaneGroup DockWidth="275">
+                        <xcad:LayoutAnchorablePane>
+                            <xcad:LayoutAnchorable x:Name="selectFiler" CanClose="False" Title="Filers" ContentId="selectPane">
+                                <ListView x:Name="listviewFilers" IsSynchronizedWithCurrentItem="True" SelectionChanged="ListviewFilers_SelectionChanged">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <WrapPanel>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Image Height="30" Name="imageNasuniStatus" Margin="0,0,0,0" Grid.Row="0" Grid.Column="0" Source="{Binding Converter={StaticResource converter}}"/>
+                                                    <ProgressBar HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding PercentUsed}" Width="200"/>
+                                                    <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Name}"/>
+                                                </Grid>
+                                            </WrapPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </xcad:LayoutAnchorable>
+                        </xcad:LayoutAnchorablePane>
+                    </xcad:LayoutAnchorablePaneGroup>
+                    <xcad:LayoutDocumentPane>
+                        <xcad:LayoutDocument x:Name="layoutFilerInformation" CanClose="False" Title="Filer Information" ContentId="filersPane">
+                            <ListBox Name="listboxFiler" ItemsSource="{Binding}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <Expander Header="{Binding Name}" Style="{StaticResource profileexpander}" Width="500" IsExpanded="True">
+                                                <StackPanel>
+                                                    <Expander Header="Basic Information" Style="{StaticResource overrideexpander}">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Margin="35,0,0,0" Grid.Row="0" Grid.Column="0" Text="Build: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="0" Grid.Column="1" Text="{Binding BasicInfo.Build}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="1" Grid.Column="0" Text="Description: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="1" Grid.Column="1" Text="{Binding BasicInfo.Description}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="2" Grid.Column="0" Text="GUID: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="2" Grid.Column="1" Text="{Binding BasicInfo.Guid}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="3" Grid.Column="0" Text="Management State: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="3" Grid.Column="1" Text="{Binding BasicInfo.MgmtState}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="4" Grid.Column="0" Text="Serial Number: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="4" Grid.Column="1" Text="{Binding BasicInfo.SerialNo}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="5" Grid.Column="0" Text="Timezone: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="5" Grid.Column="1" Text="{Binding BasicInfo.Timezone}"/>
+                                                </Grid>
+                                            </Expander>
+                                            <Expander Header="CIFS Settings" Style="{StaticResource overrideexpander}">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="0" Grid.Column="0" Text="SMB Version: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="0" Grid.Column="1" Text="{Binding CifsInfo.SMB}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="1" Grid.Column="0" Text="Veto Files: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="1" Grid.Column="1" Text="{Binding CifsInfo.VetoFiles}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="2" Grid.Column="0" Text="AIO Support: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="2" Grid.Column="1" Text="{Binding CifsInfo.AioSupport}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="3" Grid.Column="0" Text="SMB Encrypt: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="3" Grid.Column="1" Text="{Binding CifsInfo.SmbEncrypt}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="4" Grid.Column="0" Text="Fruit Support: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="4" Grid.Column="1" Text="{Binding CifsInfo.FruitSupport}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="5" Grid.Column="0" Text="Deny Access: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="5" Grid.Column="1" Text="{Binding CifsInfo.DenyAccess}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="6" Grid.Column="0" Text="Protocol Level: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="6" Grid.Column="1" Text="{Binding CifsInfo.ProtoLevel}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="7" Grid.Column="0" Text="Unix Extension: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="7" Grid.Column="1" Text="{Binding CifsInfo.UnixExt}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="8" Grid.Column="0" Text="Restrict Anonymous: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="8" Grid.Column="1" Text="{Binding CifsInfo.Anonymous}"/>
+                                                </Grid>
+                                            </Expander>
+                                                    <Expander Header="Status" Style="{StaticResource overrideexpander}">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="0" Grid.Column="0" Text="Offline: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="0" Grid.Column="1" Text="{Binding FilerStatus.Offline}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="1" Grid.Column="0" Text="Version: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="1" Grid.Column="1" Text="{Binding FilerStatus.Version}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="2" Grid.Column="0" Text="Platform: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="2" Grid.Column="1" Text="{Binding FilerStatus.Platform}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="3" Grid.Column="0" Text="Cache Size: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="3" Grid.Column="1" Text="{Binding FilerStatus.CacheSize}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="4" Grid.Column="0" Text="Cache Used: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="4" Grid.Column="1" Text="{Binding FilerStatus.CacheUsed}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="5" Grid.Column="0" Text="Cache Free: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="5" Grid.Column="1" Text="{Binding FilerStatus.CacheFree}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="6" Grid.Column="0" Text="Percent Free: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="6" Grid.Column="1" Text="{Binding FilerStatus.PercentFree}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="7" Grid.Column="0" Text="CPU Cores: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="7" Grid.Column="1" Text="{Binding FilerStatus.CpuCores}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="8" Grid.Column="0" Text="CPU Model: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="8" Grid.Column="1" Text="{Binding FilerStatus.CpuModel}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="9" Grid.Column="0" Text="CPU Frequency: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="9" Grid.Column="1" Text="{Binding FilerStatus.CpuFreq}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="10" Grid.Column="0" Text="Sockets: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="10" Grid.Column="1" Text="{Binding FilerStatus.Sockets}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="11" Grid.Column="0" Text="Memory: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="11" Grid.Column="1" Text="{Binding FilerStatus.Memory}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="12" Grid.Column="0" Text="Update Available: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="12" Grid.Column="1" Text="{Binding FilerStatus.UpdateAvail}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="13" Grid.Column="0" Text="Current Version: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="13" Grid.Column="1" Text="{Binding FilerStatus.CurrentVersion}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="14" Grid.Column="0" Text="Available Version: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="14" Grid.Column="1" Text="{Binding FilerStatus.NewVersion}"/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="15" Grid.Column="0" Text="Uptime: "/>
+                                                            <TextBlock Margin="35,0,0,0" Grid.Row="15" Grid.Column="1" Text="{Binding FilerStatus.Uptime}"/>
+                                                </Grid>
+                                            </Expander>
+                                        </StackPanel>
+                                            </Expander>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                        </xcad:LayoutDocument>
+                        <xcad:LayoutDocument x:Name="layoutCifsConnections" CanClose="False" Title="CIFS Connections" ContentId="cifsPane">
+                            <DataGrid Name="gridCIFS" AutoGenerateColumns="False" CanUserAddRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="User" Binding="{Binding User}" IsReadOnly="true"/>
+                                    <DataGridTextColumn Header="Share" Binding="{Binding Share}" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Client IP" Binding="{Binding Client}" IsReadOnly="true"/>
+                                    <DataGridTextColumn Header="Client Workstation" Binding="{Binding Workstation}" IsReadOnly="true"/>
+                                    <DataGridTextColumn Header="Workstation Site" Binding="{Binding ConnectedSite}" IsReadOnly="true"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </xcad:LayoutDocument>
+                        <xcad:LayoutDocument x:Name="layoutCifsLocks" CanClose="False" Title="CIFS Locks" ContentId="cifslocksPane">
+                            <ListBox Name="listboxCifsLocks" ItemsSource="{Binding}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <Expander Style="{StaticResource profileexpander}" Width="800">
+                                                <Expander.Header>
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto"/>
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Username}"/>
+                                                        <TextBlock Margin="20,0,0,0" Grid.Row="0" Grid.Column="1" Text="Locks: "/>
+                                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding CifsLockList.Count}"/>
+                                                    </Grid>
+                                                </Expander.Header>
+                                                <DataGrid Name="griduserlocks" AutoGenerateColumns="False" CanUserAddRows="False" ItemsSource="{Binding CifsLockList}">
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Client" Binding="{Binding Client}" IsReadOnly="true"/>
+                                                        <DataGridTextColumn Header="Share" Binding="{Binding Share}" IsReadOnly="True"/>
+                                                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" IsReadOnly="true"/>
+                                                        <DataGridTextColumn Header="File Path" Binding="{Binding FilePath}" IsReadOnly="true"/>
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+                                            </Expander>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                        </xcad:LayoutDocument>
+                        <xcad:LayoutDocument x:Name="layoutSearchInfo" CanClose="False" Title="Search Results" ContentId="searchPane">
+                            <DataGrid Name="gridSearchResults" AutoGenerateColumns="True" CanUserAddRows="False">
+                            </DataGrid>                            
+                        </xcad:LayoutDocument>
+                    </xcad:LayoutDocumentPane>
+                </xcad:LayoutPanel>
+            </xcad:LayoutRoot>
+        </xcad:DockingManager>
+        <Fluent:StatusBar Grid.Row="3" Grid.ColumnSpan="2">
+            <Fluent:StatusBarItem Name="statusbarStatus" Title="Staus" HorizontalAlignment="Right"/>
+        </Fluent:StatusBar>
+    </Grid>
+</Window>
