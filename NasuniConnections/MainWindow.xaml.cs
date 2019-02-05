@@ -60,7 +60,6 @@ namespace NasuniConnections
         private string nmc = "https://nasuni.domain.com";
         private string nasuniusername = "nasuniusername";
         private string nasunipassword = "nasunipassword";
-
         private dynamic filers;
         public MainWindow()
         {
