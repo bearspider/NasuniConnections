@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NasuniConnections", "NasuniConnections\NasuniConnections.csproj", "{50E300CB-34C3-4CA9-8F01-BEE93B5296CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50E300CB-34C3-4CA9-8F01-BEE93B5296CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50E300CB-34C3-4CA9-8F01-BEE93B5296CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50E300CB-34C3-4CA9-8F01-BEE93B5296CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50E300CB-34C3-4CA9-8F01-BEE93B5296CD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83685298-2EB2-48E9-9A73-E08097ABC2C6}
+	EndGlobalSection
+EndGlobal
