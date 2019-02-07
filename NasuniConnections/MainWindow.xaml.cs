@@ -56,11 +56,11 @@ namespace NasuniConnections
         private Dictionary<String, String> subnetlist = new Dictionary<string, string>();
         private bool sitesloaded = false;
         private string authtoken = "";
+        private DateTime tokenexpire;
         private string domain = "domain.com";
         private string nmc = "https://nasuni.domain.com";
         private string nasuniusername = "nasuniusername";
         private string nasunipassword = "nasunipassword";
-
         private dynamic filers;
         public MainWindow()
         {
@@ -75,7 +75,6 @@ namespace NasuniConnections
             textboxDomain.Text = domain = Properties.Settings.Default.domainname;
             textboxNasuniUser.Text = nasuniusername = Properties.Settings.Default.nasuniusername;
             nasunipassword = Properties.Settings.Default.nasunipassword;
-
 
             //Check if a valid nmc is in the settings
             Regex nmcregex = new Regex(@"https://\w+\.\w+\.\w+");
@@ -98,6 +97,10 @@ namespace NasuniConnections
                 request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", $"------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"username\"\r\n\r\n{nasuniusername}\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"password\"\r\n\r\n{nasunipassword}\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
                 IRestResponse response = client.Execute(request);
                 dynamic responsetoken = JsonConvert.DeserializeObject(response.Content);
+                string fulldate = responsetoken.expires;
+                fulldate = fulldate.Replace("UTC", "");
+                tokenexpire = DateTime.Parse(fulldate);
+
                 authtoken = "token " + responsetoken.token;
             }
             catch
@@ -106,12 +109,21 @@ namespace NasuniConnections
                 MessageBox.Show("Please configure console settings under File -> Settings", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void ValidateToken()
+        {
+            DateTime currenttime = DateTime.UtcNow;
+            if (tokenexpire < currenttime)
+            {
+                GenerateToken();
+            }
+        }
         private void LoadFilers()
         {
             if(authtoken == null)
             {
                 GenerateToken();
             }
+            ValidateToken();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             //Generate list of AD Subnets
@@ -226,9 +238,10 @@ namespace NasuniConnections
             
         }
         private void ListviewFilers_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+        {            
             if (listviewFilers.SelectedItem != null)
             {
+                ValidateToken();
                 NasuniFiler selectedfiler = (NasuniFiler)listviewFilers.SelectedItem;
                 ObservableCollection<NasuniCIFS> cifslist = new ObservableCollection<NasuniCIFS>();
                 ObservableCollection<NasuniLock> lockslist = new ObservableCollection<NasuniLock>();
@@ -398,6 +411,7 @@ namespace NasuniConnections
         }
         private string GetShareName(String shareid)
         {
+            ValidateToken();
             var client = new RestClient($"{nmc}/api/v1.1/volumes/filers/shares/{shareid}/");
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", authtoken);
@@ -410,6 +424,7 @@ namespace NasuniConnections
         }
         private string GetFilerBySerial(String serialno)
         {
+            ValidateToken();
             var client = new RestClient($"{nmc}/api/v1.1/filers/{serialno}/");
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", authtoken);
@@ -455,6 +470,7 @@ namespace NasuniConnections
         }
         private void ButtonUserSearch_Click(object sender, RoutedEventArgs e)
         {
+            ValidateToken();
             searchresults.Clear();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -500,6 +516,7 @@ namespace NasuniConnections
         }
         private void ButtonShareSearch_Click(object sender, RoutedEventArgs e)
         {
+            ValidateToken();
             searchresults.Clear();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -556,6 +573,7 @@ namespace NasuniConnections
         }
         private void ButtonSiteSearch_Click(object sender, RoutedEventArgs e)
         {
+            ValidateToken();
             searchresults.Clear();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
