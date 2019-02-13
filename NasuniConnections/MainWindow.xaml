@@ -7,7 +7,7 @@
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:Fluent="urn:fluent-ribbon"
         mc:Ignorable="d"
-        Title="Nasuni Filer Management" Height="750" Width="1000" Icon="images/Rimshotdesign-Nod2-Hard-Disk-Server.ico">
+        Title="Nasuni Filer Management" Height="750" Width="1000" Icon="images/Rimshotdesign-Nod2-Hard-Disk-Server.ico" Closing="Window_Closing">
     <Window.Resources>
         <ResourceDictionary>
             <local:MonitoringStatusConverter x:Key="converter"/>
