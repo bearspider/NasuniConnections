@@ -85,6 +85,16 @@ namespace NasuniConnections
             }
             statusbarStatus.Content = "Click \'Load Filers\' to start.";
         }
+        private void Logout()
+        {
+            //invalidate token
+            var client = new RestClient($"{nmc}/api/v1.1/auth/logout/");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("Authorization", authtoken);
+            request.AddHeader("accept", "application/json");
+            IRestResponse response = client.Execute(request);
+        }
         private void GenerateToken()
         {
             try
@@ -466,6 +476,7 @@ namespace NasuniConnections
         }
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
+            Logout();
             this.Close();
         }
         private void ButtonUserSearch_Click(object sender, RoutedEventArgs e)
@@ -611,6 +622,10 @@ namespace NasuniConnections
             statusbarStatus.Content = $"Search Completed in {elapsedTime} Seconds";
             gridSearchResults.ItemsSource = searchresults;
             layoutSearchInfo.IsActive = true;
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Logout();
         }
     }
     public static class IPAddressExtensions
